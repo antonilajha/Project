@@ -1,0 +1,22 @@
+{
+  "name": "graf",
+  "version": "1.0.0",
+  "description": "",
+  "main": "graf.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongodb": "^5.7.0"   
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "author": "",
+  "license": "ISC"
+}
