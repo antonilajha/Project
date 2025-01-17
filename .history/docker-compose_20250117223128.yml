@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  user:
+    build:
+      context: ./user
+      dockerfile: Dockerfile
+    image: user-image:alpine
+    ports:
+      - "5003:5003"
+    environment:
+      - MONGODB_URI=mongodb+srv://simicakjakob:mojabaza1@bazica0.sobrw.mongodb.net/Projekt
+    # depends_on:  Remove this line
+    #   - mongodb    Remove this line
+
+  prijava_delovno:
+    # ... (same structure as 'user' service, just different port and context)
+
+  graf:
+    # ... (same structure as 'user' service, just different port and context)
+
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    image: frontend-image:alpine
+    ports:
+      - "5002:5002"
+    depends_on:
+      - user
+      - prijava_delovno
+      - graf
+    # depends_on:  Remove this if mongodb service is removed.
+    #   - mongodb   Remove this if mongodb service is removed.
+
+
+#  Remove the entire mongodb service definition:
+#  mongodb:
+#    image: mongo:latest
+#    ...
+
+
+# Remove this volume definition as well:
+# volumes:
+#   mongodb_data:

@@ -1,0 +1,14 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY ./server/package*.json ./
+RUN npm install
+
+COPY . .
+
+EXPOSE 5002
+
+# Important: Adjust this command.  If your server.js is directly
+# in the server directory, then this is likely correct:
+CMD ["node", "./server/server.js"]

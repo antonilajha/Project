@@ -4,7 +4,6 @@
   "description": "",
   "main": "prijava_delovno.js",
   "scripts": {
-    "test": "node prijava_delovno.js",
     "start": "node prijava_delovno.js"
 
   },

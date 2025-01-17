@@ -1,6 +1,6 @@
 const { MongoClient } = require('mongodb');
 
-const url = process.env.MONGO_URL || 'mongodb+srv://simicakjakob:mojabaza1@bazica0.sobrw.mongodb.net/Projekt';
+const url = process.env.MONGO_URL || 'mongodb://localhost:27017';
 const dbName = 'Project';
 
 let db;

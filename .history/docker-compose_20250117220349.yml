@@ -1,0 +1,63 @@
+version: "3.9"
+
+services:
+  user:
+    build:
+      context: ./user
+      dockerfile: Dockerfile
+    image: user-image:alpine
+    ports:
+      - "5003:5003"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/your_db_name
+    depends_on:
+      - mongodb
+
+  prijava_delovno:
+    build:
+      context: ./prijava_delovno
+      dockerfile: Dockerfile
+    image: prijava-delovno-image:alpine
+    ports:
+      - "5004:5004"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/your_db_name
+    depends_on:
+      - mongodb
+
+  graf:
+    build:
+      context: ./graf
+      dockerfile: Dockerfile
+    image: graf-image:alpine
+    ports:
+      - "5005:5005"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/your_db_name
+    depends_on:
+      - mongodb
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    image: frontend-image:alpine
+    ports:
+      - "5002:5002"
+    depends_on:
+      - user
+      - prijava_delovno
+      - graf
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=your_root_username
+      - MONGO_INITDB_ROOT_PASSWORD=your_root_password
+
+volumes:
+  mongodb_data:

@@ -1,0 +1,40 @@
+version: "3.9"  # Consider removing this line, as it's obsolete
+
+services:
+  user:
+    build:
+      context: ./user
+      dockerfile: Dockerfile
+    ports:
+      - "5003:5003"
+    environment:
+      - MONGODB_URI=mongodb+srv://simicakjakob:mojabaza1@bazica0.sobrw.mongodb.net/Projekt
+
+  prijava_delovno:
+    build:
+      context: ./prijava_delovno
+      dockerfile: Dockerfile
+    ports:
+      - "5004:5004"
+    environment:
+      - MONGODB_URI=mongodb+srv://simicakjakob:mojabaza1@bazica0.sobrw.mongodb.net/Projekt
+
+  graf:
+    build:
+      context: ./graf
+      dockerfile: Dockerfile
+    ports:
+      - "5005:5005"
+    environment:
+      - MONGODB_URI=mongodb+srv://simicakjakob:mojabaza1@bazica0.sobrw.mongodb.net/Projekt
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5002:5002"
+    depends_on:
+      - user
+      - prijava_delovno
+      - graf

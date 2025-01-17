@@ -7,6 +7,8 @@ const app = express();
 const PORT = 5003; //user 
 
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json'); // Or use swagger-jsdoc if generating dynamically
 const bcrypt = require('bcryptjs');
 
 // Middleware to parse JSON body

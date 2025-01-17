@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+  user:
+    build:
+      context: ./user
+      dockerfile: Dockerfile
+    image: user-image:alpine
+    ports:
+      - "5003:5003"
+    environment:
+      - MONGODB_URI=mongodb+srv://simicakjakob:mojabaza1@bazica0.sobrw.mongodb.net/Projekt
+
+  prijava_delovno:
+    build:
+      context: ./prijava_delovno
+      dockerfile: Dockerfile
+    image: prijava-delovno-image:alpine
+    ports:
+      - "5004:5004"
+    environment:
+      - MONGODB_URI=mongodb+srv://simicakjakob:mojabaza1@bazica0.sobrw.mongodb.net/Projekt
+
+  graf:
+    build:
+      context: ./graf
+      dockerfile: Dockerfile
+    image: graf-image:alpine
+    ports:
+      - "5005:5005"
+    environment:
+      - MONGODB_URI=mongodb+srv://simicakjakob:mojabaza1@bazica0.sobrw.mongodb.net/Projekt
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    image: frontend-image:alpine
+    ports:
+      - "5002:5002"
+    depends_on:
+      - user
+      - prijava_delovno
+      - graf

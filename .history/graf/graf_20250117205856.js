@@ -7,7 +7,8 @@ const app = express();
 const PORT = 5005;
 
 
-
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json'); // Or use swagger-jsdoc if generating dynamically
 const bcrypt = require('bcryptjs');
 
 
@@ -20,7 +21,7 @@ app.use(express.json());
 app.get('/TojeGraf', async (req, res) => {
     try {
         const db = await connectToDB();
-        const collection = db.collection('graf');
+        const collection = db.collection('Prijava');
 
         // Fetch all documents from the collection
         const documents = await collection.find({}).toArray();

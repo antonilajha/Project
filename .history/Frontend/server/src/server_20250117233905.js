@@ -2,23 +2,28 @@ const express = require('express');
 const path = require('path');
 const { ObjectId } = require('mongodb');
 const connectToDB = require('./db');
-const bcrypt = require('bcryptjs');
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
+const authenticateToken = require('./auth');
 
-// Import the auth middleware as a function
-const { authenticateToken } = require('./auth');
 
 const app = express();
 const PORT = 5002;
 
-// Middleware
-app.use(express.json());
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json'); // Or use swagger-jsdoc if generating dynamically
+const bcrypt = require('bcryptjs');
+
+
+// Serve Swagger documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 console.log('Swagger docs available at http://localhost:5002/api-docs');
 
-// Frontend routes
+// Middleware to parse JSON body
+app.use(express.json());
+
+
+// Serve the frontend file
 app.get('/DealvnoMesto', (req, res) => {
     res.sendFile(path.join(__dirname, '../DelavnoMesto.html'));
 });
@@ -39,20 +44,21 @@ app.get('/register', (req, res) => {
     res.sendFile(path.join(__dirname, '../regester.html'));
 });
 
-// Protected routes
-app.get('/protactedPage', authenticateToken, (req, res) => {
+app.get('/protactedPage', (req, res) => {
     res.sendFile(path.join(__dirname, '../protactedPage.html'));
 });
 
+// Example protected route
 app.get('/protected', authenticateToken, (req, res) => {
     res.json({ message: 'You have access to this protected route', user: req.user });
 });
 
-// 404 handler
+// Handle 404 errors
 app.use((req, res) => {
     res.status(404).send('File not found');
 });
 
+// Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

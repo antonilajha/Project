@@ -7,6 +7,8 @@ const app = express();
 const PORT = 5003; //user 
 
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json'); // Or use swagger-jsdoc if generating dynamically
 const bcrypt = require('bcryptjs');
 
 // Middleware to parse JSON body
@@ -28,7 +30,7 @@ app.get('/users', async (req, res) => {
 app.get('/users/:id', async (req, res) => {
     try {
         const db = await connectToDB();
-        const collection = db.collection('prijava');
+        const collection = db.collection('Users');
         const user = await collection.findOne({ _id: new ObjectId(req.params.id) });
 
         if (!user) {
@@ -45,7 +47,7 @@ app.get('/users/:id', async (req, res) => {
 app.post('/ADDusers', async (req, res) => {
     try {
         const db = await connectToDB();
-        const collection = db.collection('prijava');
+        const collection = db.collection('Users');
         const { Username, Password, ISAdmin } = req.body;
 
         // Validate input
@@ -76,7 +78,7 @@ app.post('/ADDusers', async (req, res) => {
 app.put('/UPDusers/:id', async (req, res) => {
     try {
         const db = await connectToDB();
-        const collection = db.collection('prijava');
+        const collection = db.collection('Users');
         const updatedUser = req.body;
 
         const result = await collection.updateOne(
@@ -98,7 +100,7 @@ app.put('/UPDusers/:id', async (req, res) => {
 app.delete('/DELusers/:id', async (req, res) => {
     try {
         const db = await connectToDB();
-        const collection = db.collection('prijava');
+        const collection = db.collection('Users');
 
         const result = await collection.deleteOne({ _id: new ObjectId(req.params.id) });
 
@@ -117,7 +119,7 @@ app.delete('/DELusers/:id', async (req, res) => {
 app.post('/registerUser', async (req, res) => {
     try {
         const db = await connectToDB();
-        const collection = db.collection('prijava');
+        const collection = db.collection('Users');
         const { Username, Password } = req.body;
 
         // Check if the username already exists
@@ -146,7 +148,7 @@ const { generateToken } = require('./auth');
 app.post('/loginUser', async (req, res) => {
     try {
         const db = await connectToDB();
-        const collection = db.collection('prijava');
+        const collection = db.collection('Users');
         const { Username, Password } = req.body;
 
         // Find the user by username

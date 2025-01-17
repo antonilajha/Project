@@ -4,9 +4,7 @@
   "description": "",
   "main": "prijava_delovno.js",
   "scripts": {
-    "test": "node prijava_delovno.js",
-    "start": "node prijava_delovno.js"
-
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "express": "^4.18.2",
