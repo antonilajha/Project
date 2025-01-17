@@ -1,0 +1,284 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Prijava and Users API Documentation",
+      "version": "1.0.0",
+      "description": "API documentation for the Prijava and Users endpoints."
+    },
+    "servers": [
+      {
+        "url": "http://localhost:5002",
+        "description": "Local server"
+      }
+    ],
+    "paths": {
+      "/users": {
+        "get": {
+          "summary": "Get all users",
+          "responses": {
+            "200": {
+              "description": "A list of all users",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/User" }
+                  }
+                }
+              }
+            },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/users/{id}": {
+        "get": {
+          "summary": "Get a user by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "The user ID",
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Details of the user",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/User" }
+                }
+              }
+            },
+            "404": { "description": "User not found" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/ADDusers": {
+        "post": {
+          "summary": "Add a new user",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          },
+          "responses": {
+            "201": { "description": "User added successfully" },
+            "400": { "description": "Invalid request body" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/UPDusers/{id}": {
+        "put": {
+          "summary": "Update a user by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "The user ID",
+              "schema": { "type": "string" }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              }
+            }
+          },
+          "responses": {
+            "200": { "description": "User updated successfully" },
+            "404": { "description": "User not found" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/DELusers/{id}": {
+        "delete": {
+          "summary": "Delete a user by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "The user ID",
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": { "description": "User deleted successfully" },
+            "404": { "description": "User not found" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/prijava": {
+        "get": {
+          "summary": "Get all Prijava entries",
+          "responses": {
+            "200": {
+              "description": "A list of all Prijava entries",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/Prijava" }
+                  }
+                }
+              }
+            },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/prijava/{id}": {
+        "get": {
+          "summary": "Get a Prijava entry by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "The Prijava ID",
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Details of the Prijava entry",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Prijava" }
+                }
+              }
+            },
+            "404": { "description": "Prijava not found" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/ADDprijava": {
+        "post": {
+          "summary": "Add a new Prijava entry",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Prijava" }
+              }
+            }
+          },
+          "responses": {
+            "201": { "description": "Prijava added successfully" },
+            "400": { "description": "Invalid request body" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/UPDprijava/{id}": {
+        "put": {
+          "summary": "Update a Prijava entry by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "The Prijava ID",
+              "schema": { "type": "string" }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Prijava" }
+              }
+            }
+          },
+          "responses": {
+            "200": { "description": "Prijava updated successfully" },
+            "404": { "description": "Prijava not found" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/DELprijava/{id}": {
+        "delete": {
+          "summary": "Delete a Prijava entry by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "The Prijava ID",
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": { "description": "Prijava deleted successfully" },
+            "404": { "description": "Prijava not found" },
+            "500": { "description": "Server error" }
+          }
+        }
+      },
+      "/TojeGraf": {
+        "get": {
+          "summary": "Get aggregated Prijava stats",
+          "responses": {
+            "200": {
+              "description": "Aggregated Prijava stats for graph",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "date": { "type": "string" },
+                        "gender": { "type": "string" },
+                        "count": { "type": "integer" }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": { "description": "Server error" }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "User": {
+          "type": "object",
+          "properties": {
+            "_id": { "type": "string" },
+            "Username": { "type": "string" },
+            "Password": { "type": "string" }
+          }
+        },
+        "Prijava": {
+          "type": "object",
+          "properties": {
+            "_id": { "type": "string" },
+            "ime": { "type": "string" },
+            "priimek": { "type": "string" },
+            "datum_rojstva": { "type": "string" },
+            "spol": { "type": "string" },
+            "namen": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+  

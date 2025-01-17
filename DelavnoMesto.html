@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upravljanje prijav</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+        }
+        .entry {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .entry-actions {
+            margin-top: 10px;
+        }
+        button {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upravljanje prijav</h1>
+
+    <!-- Form for creating a new Prijava entry -->
+    <h2>Dodaj novo prijavo</h2>
+    <form id="create-prijava-form">
+        <label for="ime">Ime:</label>
+        <input type="text" id="ime" required>
+        <label for="priimek">Priimek:</label>
+        <input type="text" id="priimek" required>
+        <label for="datum_rojstva">Datum rojstva:</label>
+        <input type="date" id="datum_rojstva" required>
+        <label for="spol">Spol:</label>
+        <select id="spol" required>
+            <option value="moški">Moški</option>
+            <option value="ženska">Ženska</option>
+        </select>
+        <label for="namen">Namen:</label>
+        <input type="text" id="namen" required>
+        <button type="submit">Dodaj prijavo</button>
+    </form>
+
+    <!-- Display Prijava entries -->
+    <h2>Seznam prijav</h2>
+    <div id="prijava-list">
+        <p>Nalaganje podatkov...</p>
+    </div>
+
+    <script>
+        // Function to fetch all entries in the Prijava collection
+        async function fetchPrijava() {
+            try {
+                const response = await fetch('/prijava');
+                if (!response.ok) {
+                    throw new Error(`Napaka pri pridobivanju podatkov: ${response.status}`);
+                }
+                const prijava = await response.json();
+                renderPrijava(prijava);
+            } catch (error) {
+                const prijavaList = document.getElementById('prijava-list');
+                prijavaList.innerHTML = `<p style="color: red;">Napaka: ${error.message}</p>`;
+            }
+        }
+
+        // Function to render Prijava entries in the DOM
+        function renderPrijava(entries) {
+            const prijavaList = document.getElementById('prijava-list');
+            prijavaList.innerHTML = ''; // Clear existing content
+
+            if (entries.length === 0) {
+                prijavaList.textContent = 'Ni prijav.';
+                return;
+            }
+
+            entries.forEach(entry => {
+                const entryElement = document.createElement('div');
+                entryElement.className = 'entry';
+                entryElement.innerHTML = `
+                    <strong>ID:</strong> ${entry._id} <br>
+                    <strong>Ime:</strong> ${entry.ime} <br>
+                    <strong>Priimek:</strong> ${entry.priimek} <br>
+                    <strong>Datum rojstva:</strong> ${entry.datum_rojstva} <br>
+                    <strong>Spol:</strong> ${entry.spol} <br>
+                    <strong>Namen:</strong> ${entry.namen} <br>
+                    <div class="entry-actions">
+                        <button onclick="updatePrijava('${entry._id}', '${entry.ime}', '${entry.priimek}', '${entry.datum_rojstva}', '${entry.spol}', '${entry.namen}')">Posodobi</button>
+                        <button onclick="deletePrijava('${entry._id}')">Izbriši</button>
+                    </div>
+                `;
+                prijavaList.appendChild(entryElement);
+            });
+        }
+
+        // Function to create a new Prijava entry
+        document.getElementById('create-prijava-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const ime = document.getElementById('ime').value;
+            const priimek = document.getElementById('priimek').value;
+            const datum_rojstva = document.getElementById('datum_rojstva').value;
+            const spol = document.getElementById('spol').value;
+            const namen = document.getElementById('namen').value;
+
+            try {
+                const response = await fetch('/ADDprijava', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ime, priimek, datum_rojstva, spol, namen })
+                });
+                if (!response.ok) {
+                    throw new Error('Dodajanje prijave ni uspelo.');
+                }
+                document.getElementById('create-prijava-form').reset();
+                fetchPrijava(); // Refresh the list
+            } catch (error) {
+                alert(`Napaka: ${error.message}`);
+            }
+        });
+
+        // Function to update a Prijava entry
+        async function updatePrijava(id, ime, priimek, datum_rojstva, spol, namen) {
+            const newIme = prompt('Vnesite novo ime:', ime);
+            const newPriimek = prompt('Vnesite nov priimek:', priimek);
+            const newDatumRojstva = prompt('Vnesite nov datum rojstva:', datum_rojstva);
+            const newSpol = prompt('Vnesite nov spol (moški/ženska):', spol);
+            const newNamen = prompt('Vnesite nov namen:', namen);
+
+            if (!newIme || !newPriimek || !newDatumRojstva || !newSpol || !newNamen) {
+                alert('Vsa polja so obvezna.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/UPDprijava/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ime: newIme, priimek: newPriimek, datum_rojstva: newDatumRojstva, spol: newSpol, namen: newNamen })
+                });
+                if (!response.ok) {
+                    throw new Error('Posodobitev prijave ni uspela.');
+                }
+                fetchPrijava(); // Refresh the list
+            } catch (error) {
+                alert(`Napaka: ${error.message}`);
+            }
+        }
+
+        // Function to delete a Prijava entry
+        async function deletePrijava(id) {
+            if (!confirm('Ste prepričani, da želite izbrisati to prijavo?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/DELprijava/${id}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) {
+                    throw new Error('Brisanje prijave ni uspelo.');
+                }
+                fetchPrijava(); // Refresh the list
+            } catch (error) {
+                alert(`Napaka: ${error.message}`);
+            }
+        }
+
+        // Fetch Prijava entries on page load
+        fetchPrijava();
+    </script>
+</body>
+</html>

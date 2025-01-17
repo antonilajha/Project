@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protected Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to the Protected Page</h1>
+        <div id="message" class="message">Loading...</div>
+    </div>
+
+    <script>
+        async function fetchProtectedData() {
+            const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+
+            if (!token) {
+                const messageDiv = document.getElementById('message');
+                messageDiv.innerHTML = '<p class="error">Access denied. Please log in to access this page.</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch('/protected', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}` // Send the token in the Authorization header
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    displayData(data);
+                } else if (response.status === 401 || response.status === 403) {
+                    const error = await response.json();
+                    displayError(error.error || 'Access denied. Invalid or expired token.');
+                } else {
+                    throw new Error('Failed to fetch protected data');
+                }
+            } catch (error) {
+                displayError(error.message || 'An error occurred while fetching data.');
+            }
+        }
+
+        function displayData(data) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `
+                <p><strong>Message:</strong> ${data.message}</p>
+                <p><strong>User Info:</strong></p>
+                <ul>
+                    <li><strong>ID:</strong> ${data.user.id}</li>
+                    <li><strong>Username:</strong> ${data.user.username}</li>
+                </ul>
+            `;
+        }
+
+        function displayError(error) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `<p class="error">${error}</p>`;
+        }
+
+        // Fetch protected data on page load
+        fetchProtectedData();
+    </script>
+</body>
+</html>

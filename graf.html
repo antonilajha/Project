@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Statistika prijav</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Statistika prijav po spolu in dnevu</h1>
+    <canvas id="prijavaChart" width="800" height="400"></canvas>
+
+    <script>
+        async function fetchStats() {
+            try {
+                const response = await fetch('/TojeGraf');
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch stats: ${response.status}`);
+                }
+                const stats = await response.json();
+                if (!Array.isArray(stats) || stats.length === 0) {
+                    throw new Error("No data available or incorrect response format.");
+                }
+                processStats(stats);
+            } catch (error) {
+                console.error(`Error fetching stats: ${error.message}`);
+                alert("Napaka pri pridobivanju podatkov za graf.");
+            }
+        }
+    
+        function processStats(stats) {
+            const dates = [];
+            const maleCounts = [];
+            const femaleCounts = [];
+    
+            // Filter out entries with count: 0
+            const validStats = stats.filter(item => item.count > 0);
+    
+            // Group by date
+            const groupedStats = validStats.reduce((acc, item) => {
+                const date = item.date;
+                const gender = item.gender;
+                const count = item.count;
+    
+                if (!acc[date]) {
+                    acc[date] = { moški: 0, ženska: 0 };
+                }
+    
+                acc[date][gender] += count;
+                return acc;
+            }, {});
+    
+            for (const date in groupedStats) {
+                dates.push(date);
+                maleCounts.push(groupedStats[date].moški);
+                femaleCounts.push(groupedStats[date].ženska);
+            }
+    
+            renderChart(dates, maleCounts, femaleCounts);
+        }
+    
+        function renderChart(dates, maleCounts, femaleCounts) {
+            const ctx = document.getElementById('prijavaChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            label: 'Moški',
+                            data: maleCounts,
+                            backgroundColor: 'blue',
+                        },
+                        {
+                            label: 'Ženske',
+                            data: femaleCounts,
+                            backgroundColor: 'pink',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Število prijav po spolu in datumu'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Datum'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Število prijav'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    
+        fetchStats();
+    </script>
+    
+</body>
+</html>

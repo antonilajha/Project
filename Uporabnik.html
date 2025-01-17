@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Data from MongoDB</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #333;
+        }
+        .user {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .user-actions {
+            margin-top: 10px;
+        }
+        button {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>User Data</h1>
+
+    <!-- Form for creating a new user -->
+    <h2>Create User</h2>
+    <form id="create-user-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" required>
+        <label for="isAdmin">Is Admin:</label>
+        <select id="isAdmin" required>
+            <option value="true">true</option>
+            <option value="false" selected>false</option>
+        </select>
+        <button type="submit">Create</button>
+    </form>
+
+    <!-- Display users -->
+    <h2>Users</h2>
+    <div id="users">
+        <p>Loading user data...</p>
+    </div>
+
+    <script>
+        // Function to fetch all users
+        async function fetchUsers() {
+            try {
+                const response = await fetch('/users');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const users = await response.json();
+                renderUsers(users);
+            } catch (error) {
+                const usersDiv = document.getElementById('users');
+                usersDiv.innerHTML = `<p style="color: red;">Failed to load user data: ${error.message}</p>`;
+            }
+        }
+
+        // Function to render users in the DOM
+        function renderUsers(users) {
+            const usersDiv = document.getElementById('users');
+            usersDiv.innerHTML = ''; // Clear existing content
+
+            if (users.length === 0) {
+                usersDiv.textContent = 'No user data available.';
+                return;
+            }
+
+            users.forEach(user => {
+                const userElement = document.createElement('div');
+                userElement.className = 'user';
+                userElement.innerHTML = `
+                    <strong>ID:</strong> ${user._id} <br>
+                    <strong>Username:</strong> ${user.Username} <br>                    
+                    <strong>Password:</strong> ${user.Password} <br>
+                    <strong>PasswordHash:</strong> ${user.PasswordHash} <br>
+                    <strong>Is Admin:</strong> ${user.ISAdmin} <br>
+                    <div class="user-actions">
+                        <button onclick="updateUser('${user._id}', '${user.Username}', '${user.Password}', '${user.PasswordHash}', '${user.ISAdmin}')">Update</button>
+                        <button onclick="deleteUser('${user._id}')">Delete</button>
+                    </div>
+                `;
+                usersDiv.appendChild(userElement);
+            });
+        }
+
+        // Function to create a new user
+        document.getElementById('create-user-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const isAdmin = document.getElementById('isAdmin').value;
+
+            try {
+                const response = await fetch('/ADDusers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ Username: username, Password: password, ISAdmin: isAdmin })
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to create user');
+                }
+                document.getElementById('create-user-form').reset();
+                fetchUsers(); // Refresh the list
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
+        });
+
+        // Fetch users on page load
+        fetchUsers();
+    </script>
+</body>
+</html>
